@@ -148,6 +148,9 @@ node test-filtros-precio.js
 
 31/08/2025
 
+Act 3
+9/09/2025
+
 ## Licencia
 
 Proyecto académico - Universidad
