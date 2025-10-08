@@ -1,4 +1,4 @@
-// Configuración del sistema
+// Configuración del sistema TechSalle
 export const CONFIG = {
   // URLs de la API
   API_BASE_URL: 'http://localhost:5000',
@@ -12,15 +12,23 @@ export const CONFIG = {
   
   // Configuración de la aplicación
   APP: {
-    NOMBRE: 'Sistema de Gestión de Productos',
-    DESCRIPCION: 'Control completo de inventario, precios y proveedores',
-    VERSION: '1.0.0'
+    NOMBRE: 'TechSalle',
+    DESCRIPCION: 'Gestión de productos tecnológicos - CRUD completo',
+    VERSION: '2.0.0',
+    AUTHOR: 'Sistema de Inventario Tecnológico'
   },
   
   // Configuración de la base de datos
   DB: {
-    NOMBRE: 'sistema_productos',
+    NOMBRE: 'techsalle',
     TABLA: 'productos'
+  },
+  
+  // Configuración de la interfaz
+  UI: {
+    THEME: 'modern',
+    PRIMARY_COLOR: '#667eea',
+    SECONDARY_COLOR: '#764ba2'
   }
 };
 
