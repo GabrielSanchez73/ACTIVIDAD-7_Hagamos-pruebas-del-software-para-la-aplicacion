@@ -54,6 +54,7 @@ import {
   Business as BusinessIcon
 } from '@mui/icons-material';
 import './App.css';
+import CategoryManager from './components/CategoryManager';
 
 function App() {
   // Estados para el formulario de productos
@@ -64,12 +65,14 @@ function App() {
   const [nuevaCategoria, setNuevaCategoria] = useState('');
   const [stock, setStock] = useState('');
   const [proveedor, setProveedor] = useState('');
+  const [imagenUrl, setImagenUrl] = useState('');
 
   // Estados para la gestión de datos
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
   const [estadisticas, setEstadisticas] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -175,6 +178,7 @@ function App() {
     setNuevaCategoria('');
     setStock('');
     setProveedor('');
+    setImagenUrl('');
     setEditIndex(null);
   };
 
@@ -208,7 +212,7 @@ function App() {
         const response = await fetch(`${getApiUrl('PRODUCTOS')}/${producto.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor })
+          body: JSON.stringify({ nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor, imagenUrl })
         });
 
         if (response.ok) {
@@ -226,7 +230,7 @@ function App() {
         const response = await fetch(getApiUrl('PRODUCTOS'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor })
+          body: JSON.stringify({ nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor, imagenUrl })
         });
 
         const data = await response.json();
@@ -287,6 +291,7 @@ function App() {
     setNuevaCategoria('');
     setStock(producto.stock);
     setProveedor(producto.proveedor || '');
+    setImagenUrl(producto.imagenUrl || '');
     setEditIndex(idx);
     setOpenDialog(true);
   };
@@ -320,6 +325,11 @@ function App() {
     if (filtroPrecioMin && filtroPrecioMin.trim() !== '') filtros.push(`Precio ≥ $${filtroPrecioMin}`);
     if (filtroPrecioMax && filtroPrecioMax.trim() !== '') filtros.push(`Precio ≤ $${filtroPrecioMax}`);
     return filtros.join(', ');
+  };
+
+  // Función para manejar cambios en categorías
+  const handleCategoryChange = () => {
+    cargarCategorias();
   };
 
   return (
@@ -638,8 +648,32 @@ function App() {
           )}
         </Paper>
 
-        {/* Botón para agregar producto */}
-        <Box sx={{ mb: 3, textAlign: 'right' }}>
+        {/* Botones de acción */}
+        <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Button
+            variant="outlined"
+            startIcon={<CategoryIcon />}
+            onClick={() => setOpenCategoryDialog(true)}
+            size="large"
+            sx={{ 
+              borderRadius: 3,
+              px: 4,
+              py: 2,
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              borderColor: '#667eea',
+              color: '#667eea',
+              '&:hover': {
+                borderColor: '#5a6fd8',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                transform: 'translateY(-2px)',
+              },
+              transition: 'all 0.3s ease-in-out'
+            }}
+          >
+            Gestionar Categorías
+          </Button>
+          
           <Button
             variant="contained"
             startIcon={<AddIcon />}
@@ -686,13 +720,14 @@ function App() {
                 <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.95rem' }}>Categoría</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.95rem' }}>Stock</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.95rem' }}>Proveedor</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.95rem' }}>Imagen</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.95rem' }}>Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {productos.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} align="center" sx={{ py: 6 }}>
+                  <TableCell colSpan={8} align="center" sx={{ py: 6 }}>
                     {hayFiltrosActivos() ? (
                       <Box sx={{ textAlign: 'center' }}>
                         <SearchIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
@@ -789,6 +824,42 @@ function App() {
                       <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
                         {producto.proveedor || 'No especificado'}
                       </Typography>
+                    </TableCell>
+                    <TableCell sx={{ py: 2 }}>
+                      {producto.imagenUrl ? (
+                        <Box
+                          component="img"
+                          src={producto.imagenUrl}
+                          alt={producto.nombre}
+                          sx={{
+                            width: 50,
+                            height: 50,
+                            objectFit: 'cover',
+                            borderRadius: 1,
+                            border: '1px solid #e0e0e0'
+                          }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <Box
+                          sx={{
+                            width: 50,
+                            height: 50,
+                            backgroundColor: '#f5f5f5',
+                            borderRadius: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '1px solid #e0e0e0'
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary">
+                            Sin imagen
+                          </Typography>
+                        </Box>
+                      )}
                     </TableCell>
                     <TableCell sx={{ py: 2 }}>
                       <Box sx={{ display: 'flex', gap: 0.5 }}>
@@ -984,7 +1055,7 @@ function App() {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label="Proveedor"
@@ -997,6 +1068,20 @@ function App() {
                         </InputAdornment>
                       ),
                     }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="URL de Imagen"
+                    value={imagenUrl}
+                    onChange={(e) => setImagenUrl(e.target.value)}
+                    placeholder="https://ejemplo.com/imagen.jpg"
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         borderRadius: 2,
@@ -1052,6 +1137,13 @@ function App() {
             {snackbar.message}
           </Alert>
         </Snackbar>
+
+        {/* Gestor de Categorías */}
+        <CategoryManager
+          open={openCategoryDialog}
+          onClose={() => setOpenCategoryDialog(false)}
+          onCategoryChange={handleCategoryChange}
+        />
       </Container>
     </Box>
   );
