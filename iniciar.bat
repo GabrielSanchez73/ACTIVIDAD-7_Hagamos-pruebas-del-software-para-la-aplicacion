@@ -18,16 +18,16 @@ echo Node.js encontrado
 
 echo.
 echo Verificando dependencias del servidor...
-if not exist "crud-nodejs-mysql-reactjs\server\node_modules" (
+if not exist "server\node_modules" (
     echo Instalando dependencias del servidor...
-    cd crud-nodejs-mysql-reactjs\server
+    cd server
     npm install
     if %errorlevel% neq 0 (
         echo Error al instalar dependencias del servidor
         pause
         exit /b 1
     )
-    cd ..\..
+    cd ..
     echo Dependencias del servidor instaladas
 ) else (
     echo Dependencias del servidor ya estan instaladas
@@ -35,16 +35,16 @@ if not exist "crud-nodejs-mysql-reactjs\server\node_modules" (
 
 echo.
 echo Verificando dependencias del cliente...
-if not exist "crud-nodejs-mysql-reactjs\client\node_modules" (
+if not exist "client\node_modules" (
     echo Instalando dependencias del cliente...
-    cd crud-nodejs-mysql-reactjs\client
+    cd client
     npm install
     if %errorlevel% neq 0 (
         echo Error al instalar dependencias del cliente
         pause
         exit /b 1
     )
-    cd ..\..
+    cd ..
     echo Dependencias del cliente instaladas
 ) else (
     echo Dependencias del cliente ya estan instaladas
@@ -56,16 +56,16 @@ echo INICIANDO SISTEMA
 echo ========================================
 echo.
 echo Iniciando servidor en puerto 5000...
-start "Servidor" cmd /k "cd /d %cd%\crud-nodejs-mysql-reactjs\server && npm start"
+start "Servidor" cmd /k "cd /d %cd%\server && npm start"
 
 timeout /t 3 /nobreak >nul
 
-echo Iniciando cliente en puerto 4000...
-start "Cliente" cmd /k "cd /d %cd%\crud-nodejs-mysql-reactjs\client && npm start"
+echo Iniciando cliente en puerto 3000...
+start "Cliente" cmd /k "cd /d %cd%\client && npm start"
 
 echo.
 echo Sistema iniciado:
-echo Frontend: http://localhost:4000
+echo Frontend: http://localhost:3000
 echo Backend: http://localhost:5000
 echo.
 echo Presiona cualquier tecla para cerrar...

@@ -832,14 +832,24 @@ function App() {
                           src={producto.imagenUrl}
                           alt={producto.nombre}
                           sx={{
-                            width: 50,
-                            height: 50,
+                            width: 60,
+                            height: 60,
                             objectFit: 'cover',
                             borderRadius: 1,
-                            border: '1px solid #e0e0e0'
+                            border: '1px solid #e0e0e0',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s ease-in-out',
+                            '&:hover': {
+                              transform: 'scale(1.1)',
+                              zIndex: 1,
+                              position: 'relative'
+                            }
                           }}
                           onError={(e) => {
                             e.target.style.display = 'none';
+                          }}
+                          onClick={() => {
+                            window.open(producto.imagenUrl, '_blank');
                           }}
                         />
                       ) : (
@@ -1088,6 +1098,48 @@ function App() {
                       },
                     }}
                   />
+                  {imagenUrl && imagenUrl.trim() !== '' && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Vista previa:
+                      </Typography>
+                      <Box
+                        component="img"
+                        src={imagenUrl}
+                        alt="Vista previa"
+                        sx={{
+                          maxWidth: 150,
+                          maxHeight: 150,
+                          objectFit: 'cover',
+                          borderRadius: 2,
+                          border: '1px solid #e0e0e0',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          width: 150,
+                          height: 150,
+                          backgroundColor: '#f5f5f5',
+                          borderRadius: 2,
+                          display: 'none',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: '1px solid #e0e0e0',
+                          flexDirection: 'column',
+                          gap: 1
+                        }}
+                      >
+                        <Typography variant="caption" color="text.secondary">
+                          Imagen no válida
+                        </Typography>
+                      </Box>
+                    </Box>
+                  )}
                 </Grid>
               </Grid>
             </DialogContent>
