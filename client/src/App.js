@@ -330,6 +330,7 @@ function App() {
   // Función para manejar cambios en categorías
   const handleCategoryChange = () => {
     cargarCategorias();
+    cargarProductos(); // Recargar productos para reflejar cambios en categorías
   };
 
   return (
