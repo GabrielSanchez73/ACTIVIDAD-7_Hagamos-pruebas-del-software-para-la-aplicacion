@@ -114,8 +114,9 @@ function App() {
 
       if (filtroNombre) params.append('nombre', filtroNombre);
       if (filtroCategoria) {
-        // Si filtroCategoria es un objeto, usar el nombre
-        const catName = typeof filtroCategoria === 'object' ? filtroCategoria.name || filtroCategoria : filtroCategoria;
+        // Buscar el nombre de la categoría por ID
+        const catEncontrada = categorias.find(cat => (cat.id || cat) === filtroCategoria);
+        const catName = catEncontrada ? (catEncontrada.name || catEncontrada) : filtroCategoria;
         params.append('categoria', catName);
       }
       if (filtroPrecioMin && filtroPrecioMin.trim() !== '') params.append('precio_min', filtroPrecioMin);
@@ -208,15 +209,8 @@ function App() {
     // Determinar la categoría final
     let categoriaFinal = categoria;
     let categoriaId = categoria;
-    if (categoria === '__nueva__') {
-      if (!nuevaCategoria.trim()) {
-        mostrarNotificacion('Debe especificar el nombre de la nueva categoría', 'error');
-        return;
-      }
-      categoriaFinal = nuevaCategoria.trim();
-      categoriaId = nuevaCategoria.trim();
-    } else if (!categoria) {
-      mostrarNotificacion('Debe seleccionar o crear una categoría', 'error');
+    if (!categoria) {
+      mostrarNotificacion('Debe seleccionar una categoría', 'error');
       return;
     } else {
       // Si es un ID numérico, buscar el nombre de la categoría
@@ -1042,12 +1036,7 @@ function App() {
                     <Select
                       value={categoria}
                       label="Categoría"
-                      onChange={(e) => {
-                        setCategoria(e.target.value);
-                        if (e.target.value === '__nueva__') {
-                          setNuevaCategoria('');
-                        }
-                      }}
+                      onChange={(e) => setCategoria(e.target.value)}
                       sx={{
                         borderRadius: 2,
                       }}
@@ -1060,27 +1049,8 @@ function App() {
                           {cat.name || cat}
                         </MenuItem>
                       ))}
-                      <MenuItem value="__nueva__">
-                        <em>Agregar nueva categoría</em>
-                      </MenuItem>
                     </Select>
                   </FormControl>
-                  {categoria === '__nueva__' && (
-                    <TextField
-                      fullWidth
-                      label="Nueva categoría"
-                      value={nuevaCategoria}
-                      onChange={(e) => setNuevaCategoria(e.target.value)}
-                      margin="dense"
-                      size="small"
-                      placeholder="Escribe el nombre de la nueva categoría"
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                        },
-                      }}
-                    />
-                  )}
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
