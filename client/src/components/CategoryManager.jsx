@@ -33,7 +33,7 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon
 } from '@mui/icons-material';
-import { categoriesAPI } from '../api/categories';
+import { categoriesAPI } from './api/categories';
 
 function CategoryManager({ open, onClose, onCategoryChange }) {
   const [categorias, setCategorias] = useState([]);
