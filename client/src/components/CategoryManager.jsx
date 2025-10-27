@@ -33,12 +33,11 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon
 } from '@mui/icons-material';
-import { getApiUrl } from '../config';
+import { categoriesAPI } from '../api/categories';
 
 function CategoryManager({ open, onClose, onCategoryChange }) {
   const [categorias, setCategorias] = useState([]);
   const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
   const [editIndex, setEditIndex] = useState(null);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -51,8 +50,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const cargarCategorias = async () => {
     try {
-      const response = await fetch(getApiUrl('CATEGORIAS'));
-      const data = await response.json();
+      const data = await categoriesAPI.getAll();
       setCategorias(data);
     } catch (error) {
       mostrarNotificacion('Error al cargar categorías', 'error');
@@ -69,7 +67,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const limpiarFormulario = () => {
     setNombre('');
-    setDescripcion('');
     setEditIndex(null);
   };
 
@@ -90,43 +87,24 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
       if (editIndex !== null) {
         // Actualizar categoría existente
         const categoria = categorias[editIndex];
-        const response = await fetch(`${getApiUrl('CATEGORIAS')}/${categoria.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() })
-        });
-
-        if (response.ok) {
-          const nuevasCategorias = [...categorias];
-          nuevasCategorias[editIndex] = { ...categoria, nombre: nombre.trim(), descripcion: descripcion.trim() };
-          setCategorias(nuevasCategorias);
-          setEditIndex(null);
-          mostrarNotificacion('Categoría actualizada correctamente');
-        } else {
-          const errorData = await response.json();
-          mostrarNotificacion(errorData.error || 'Error al actualizar la categoría', 'error');
-        }
+        await categoriesAPI.update(categoria.id, { name: nombre.trim() });
+        const nuevasCategorias = [...categorias];
+        nuevasCategorias[editIndex] = { ...categoria, name: nombre.trim() };
+        setCategorias(nuevasCategorias);
+        setEditIndex(null);
+        mostrarNotificacion('Categoría actualizada correctamente');
       } else {
         // Crear nueva categoría
-        const response = await fetch(getApiUrl('CATEGORIAS'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setCategorias([...categorias, data]);
-          mostrarNotificacion('Categoría creada correctamente');
-          onCategoryChange && onCategoryChange();
-        } else {
-          mostrarNotificacion(data.error || 'Error al crear la categoría', 'error');
-        }
+        const data = await categoriesAPI.create({ name: nombre.trim() });
+        setCategorias([...categorias, data]);
+        mostrarNotificacion('Categoría creada correctamente');
+        onCategoryChange && onCategoryChange();
       }
 
       limpiarFormulario();
     } catch (error) {
-      mostrarNotificacion('Error de conexión', 'error');
+      const errorMessage = error.response?.data?.error || 'Error al guardar la categoría';
+      mostrarNotificacion(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -134,26 +112,20 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const eliminarCategoria = async (idx) => {
     const categoria = categorias[idx];
-    if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria.nombre}"?`)) {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria.name || categoria.nombre}"?`)) {
       setLoading(true);
       try {
-        const response = await fetch(`${getApiUrl('CATEGORIAS')}/${categoria.id}`, {
-          method: 'DELETE'
-        });
-
-        if (response.ok) {
-          setCategorias(categorias.filter((_, i) => i !== idx));
-          if (editIndex === idx) {
-            setEditIndex(null);
-            limpiarFormulario();
-          }
-          mostrarNotificacion('Categoría eliminada correctamente');
-          onCategoryChange && onCategoryChange();
-        } else {
-          mostrarNotificacion('Error al eliminar la categoría', 'error');
+        await categoriesAPI.delete(categoria.id);
+        setCategorias(categorias.filter((_, i) => i !== idx));
+        if (editIndex === idx) {
+          setEditIndex(null);
+          limpiarFormulario();
         }
+        mostrarNotificacion('Categoría eliminada correctamente');
+        onCategoryChange && onCategoryChange();
       } catch (error) {
-        mostrarNotificacion('Error de conexión al eliminar', 'error');
+        const errorMessage = error.response?.data?.error || 'Error al eliminar la categoría';
+        mostrarNotificacion(errorMessage, 'error');
       } finally {
         setLoading(false);
       }
@@ -162,8 +134,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const editarCategoria = (idx) => {
     const categoria = categorias[idx];
-    setNombre(categoria.nombre);
-    setDescripcion(categoria.descripcion || '');
+    setNombre(categoria.name || categoria.nombre);
     setEditIndex(idx);
   };
 
@@ -217,19 +188,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Descripción"
-                      value={descripcion}
-                      onChange={(e) => setDescripcion(e.target.value)}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                        },
-                      }}
-                    />
-                  </Grid>
                   <Grid item xs={12}>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Button
@@ -276,14 +234,13 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 }}>
                   <TableCell sx={{ color: 'white', fontWeight: 600 }}>Nombre</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Descripción</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 600 }}>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {categorias.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} align="center" sx={{ py: 4 }}>
+                    <TableCell colSpan={2} align="center" sx={{ py: 4 }}>
                       <Box sx={{ textAlign: 'center' }}>
                         <CategoryIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
                         <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -297,18 +254,13 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                   </TableRow>
                 ) : (
                   categorias.map((categoria, idx) => (
-                    <TableRow key={idx} hover>
+                    <TableRow key={categoria.id || idx} hover>
                       <TableCell>
                         <Chip
-                          label={categoria.nombre}
+                          label={categoria.name || categoria.nombre}
                           color="primary"
                           sx={{ fontWeight: 600 }}
                         />
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
-                          {categoria.descripcion || 'Sin descripción'}
-                        </Typography>
                       </TableCell>
                       <TableCell>
                         <Box sx={{ display: 'flex', gap: 0.5 }}>
