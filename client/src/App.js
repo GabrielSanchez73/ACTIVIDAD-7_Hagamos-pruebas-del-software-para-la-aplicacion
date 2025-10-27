@@ -354,31 +354,9 @@ function App() {
     setOpenDialog(true);
   };
 
-  // Función para aplicar filtros (ahora automática)
+  // Función para aplicar filtros
   const aplicarFiltros = () => {
     cargarProductos();
-  };
-
-  // Función para manejar cambios en filtros de texto
-  const handleFiltroNombreChange = (e) => {
-    setFiltroNombre(e.target.value);
-    // Aplicar filtro automáticamente después de un pequeño delay
-    setTimeout(() => {
-      cargarProductos();
-    }, 300);
-  };
-
-  // Función para manejar cambios en filtros de precio
-  const handleFiltroPrecioChange = (name, value) => {
-    if (name === 'min') {
-      setFiltroPrecioMin(value);
-    } else {
-      setFiltroPrecioMax(value);
-    }
-    // Aplicar filtro automáticamente después de un pequeño delay
-    setTimeout(() => {
-      cargarProductos();
-    }, 300);
   };
 
   // Función para limpiar filtros
@@ -387,10 +365,7 @@ function App() {
     setFiltroCategoria('');
     setFiltroPrecioMin('');
     setFiltroPrecioMax('');
-    // Recargar productos sin filtros
-    setTimeout(() => {
-      cargarProductos();
-    }, 100);
+    cargarProductos();
   };
 
   // Función para verificar si hay filtros activos
@@ -414,6 +389,22 @@ function App() {
   const handleCategoryChange = () => {
     cargarCategorias();
     cargarProductos(); // Recargar productos para reflejar cambios en categorías
+    // Actualizar productos existentes con los nuevos nombres de categorías
+    setProductos(prevProductos =>
+      prevProductos.map(producto => {
+        const categoriaActualizada = categorias.find(cat =>
+          cat.id === producto.categoria_id || cat.id === producto.category_id
+        );
+        if (categoriaActualizada) {
+          return {
+            ...producto,
+            category: categoriaActualizada.name,
+            categoria: categoriaActualizada.name
+          };
+        }
+        return producto;
+      })
+    );
   };
 
   return (
@@ -581,8 +572,8 @@ function App() {
                 fullWidth
                 label="Buscar por nombre"
                 value={filtroNombre}
-                onChange={handleFiltroNombreChange}
-                placeholder="Escribe para buscar productos..."
+                onChange={(e) => setFiltroNombre(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && aplicarFiltros()}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -638,8 +629,8 @@ function App() {
                 label="Precio mínimo"
                 type="number"
                 value={filtroPrecioMin}
-                onChange={(e) => handleFiltroPrecioChange('min', e.target.value)}
-                placeholder="0.00"
+                onChange={(e) => setFiltroPrecioMin(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && aplicarFiltros()}
                 InputProps={{
                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
                 }}
@@ -657,8 +648,8 @@ function App() {
                 label="Precio máximo"
                 type="number"
                 value={filtroPrecioMax}
-                onChange={(e) => handleFiltroPrecioChange('max', e.target.value)}
-                placeholder="0.00"
+                onChange={(e) => setFiltroPrecioMax(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && aplicarFiltros()}
                 InputProps={{
                   startAdornment: <InputAdornment position="start">$</InputAdornment>,
                 }}
@@ -672,19 +663,34 @@ function App() {
             </Grid>
             <Grid item xs={12} md={2}>
               <Box sx={{ display: 'flex', gap: 1, height: '100%' }}>
-                <Button
-                  variant="outlined"
+                <Button 
+                  variant="contained" 
+                  onClick={aplicarFiltros}
+                  sx={{ 
+                    flex: 1,
+                    minHeight: '56px',
+                    background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%)',
+                      transform: 'translateY(-1px)',
+                    },
+                    transition: 'all 0.2s ease-in-out'
+                  }}
+                  startIcon={<SearchIcon />}
+                >
+                  Buscar
+                </Button>
+                <Button 
+                  variant="outlined" 
                   onClick={limpiarFiltros}
-                  sx={{
+                  sx={{ 
                     flex: 1,
                     minHeight: '56px',
                     borderRadius: 2,
                     fontWeight: 600,
-                    borderColor: '#667eea',
-                    color: '#667eea',
                     '&:hover': {
-                      borderColor: '#5a6fd8',
-                      backgroundColor: 'rgba(102, 126, 234, 0.1)',
                       transform: 'translateY(-1px)',
                     },
                     transition: 'all 0.2s ease-in-out'
