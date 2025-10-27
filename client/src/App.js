@@ -234,7 +234,7 @@ function App() {
 
         if (response.ok) {
           const nuevosProductos = [...productos];
-          nuevosProductos[editIndex] = { ...producto, nombre, descripcion, precio, categoria, stock, proveedor, imagenUrl };
+          nuevosProductos[editIndex] = { ...producto, name: nombre, description: descripcion, price: precio, category: categoriaFinal, stock: stock, supplier: proveedor, image_url: imagenUrl };
           setProductos(nuevosProductos);
           setEditIndex(null);
           mostrarNotificacion('Producto actualizado correctamente');
@@ -280,7 +280,7 @@ function App() {
   // Función para eliminar producto
   const eliminarProducto = async (idx) => {
     const producto = productos[idx];
-    if (window.confirm(`¿Estás seguro de que quieres eliminar "${producto.nombre}"?`)) {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar "${producto.name || producto.nombre}"?`)) {
       setLoading(true);
       try {
         const response = await fetch(`${getApiUrl('PRODUCTOS')}/${producto.id}`, {
@@ -309,16 +309,16 @@ function App() {
   // Función para editar producto
   const editarProducto = (idx) => {
     const producto = productos[idx];
-    setNombre(producto.nombre);
-    setDescripcion(producto.descripcion || '');
-    setPrecio(producto.precio);
+    setNombre(producto.name || producto.nombre);
+    setDescripcion(producto.description || producto.descripcion || '');
+    setPrecio(producto.price || producto.precio);
     // Buscar la categoría por nombre para obtener el ID
-    const catEncontrada = categorias.find(cat => (cat.name || cat) === producto.categoria);
-    setCategoria(catEncontrada ? (catEncontrada.id || catEncontrada) : producto.categoria);
+    const catEncontrada = categorias.find(cat => (cat.name || cat) === (producto.category || producto.categoria));
+    setCategoria(catEncontrada ? (catEncontrada.id || catEncontrada) : (producto.category || producto.categoria));
     setNuevaCategoria('');
     setStock(producto.stock);
-    setProveedor(producto.proveedor || '');
-    setImagenUrl(producto.imagenUrl || '');
+    setProveedor(producto.supplier || producto.proveedor || '');
+    setImagenUrl(producto.image_url || producto.imagenUrl || '');
     setEditIndex(idx);
     setOpenDialog(true);
   };
@@ -807,20 +807,20 @@ function App() {
                   >
                     <TableCell sx={{ py: 2 }}>
                       <Typography variant="subtitle2" fontWeight="bold" sx={{ color: '#2c3e50' }}>
-                        {producto.nombre}
+                        {producto.name || producto.nombre}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2 }}>
                       <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.4 }}>
-                        {producto.descripcion || 'Sin descripción'}
+                        {producto.description || producto.descripcion || 'Sin descripción'}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2 }}>
                       <Chip
-                        label={`$${parseFloat(producto.precio).toFixed(2)}`}
+                        label={`$${parseFloat(producto.price || producto.precio || 0).toFixed(2)}`}
                         color="success"
                         size="small"
-                        sx={{ 
+                        sx={{
                           fontWeight: 600,
                           borderRadius: 2
                         }}
@@ -828,10 +828,10 @@ function App() {
                     </TableCell>
                     <TableCell sx={{ py: 2 }}>
                       <Chip
-                        label={producto.categoria}
+                        label={producto.category || producto.categoria}
                         color="primary"
                         size="small"
-                        sx={{ 
+                        sx={{
                           fontWeight: 600,
                           borderRadius: 2
                         }}
@@ -842,7 +842,7 @@ function App() {
                         label={producto.stock}
                         color={producto.stock > 10 ? 'success' : producto.stock > 5 ? 'warning' : 'error'}
                         size="small"
-                        sx={{ 
+                        sx={{
                           fontWeight: 600,
                           borderRadius: 2
                         }}
@@ -850,15 +850,15 @@ function App() {
                     </TableCell>
                     <TableCell sx={{ py: 2 }}>
                       <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                        {producto.proveedor || 'No especificado'}
+                        {producto.supplier || producto.proveedor || 'No especificado'}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ py: 2 }}>
-                      {producto.imagenUrl ? (
+                      {producto.image_url || producto.imagenUrl ? (
                         <Box
                           component="img"
-                          src={producto.imagenUrl}
-                          alt={producto.nombre}
+                          src={producto.image_url || producto.imagenUrl}
+                          alt={producto.name || producto.nombre}
                           sx={{
                             width: 60,
                             height: 60,
@@ -877,7 +877,7 @@ function App() {
                             e.target.style.display = 'none';
                           }}
                           onClick={() => {
-                            window.open(producto.imagenUrl, '_blank');
+                            window.open(producto.image_url || producto.imagenUrl, '_blank');
                           }}
                         />
                       ) : (
