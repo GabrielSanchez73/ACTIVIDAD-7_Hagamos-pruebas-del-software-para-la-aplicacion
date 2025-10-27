@@ -193,15 +193,24 @@ function App() {
 
     // Determinar la categoría final
     let categoriaFinal = categoria;
+    let categoriaId = categoria;
     if (categoria === '__nueva__') {
       if (!nuevaCategoria.trim()) {
         mostrarNotificacion('Debe especificar el nombre de la nueva categoría', 'error');
         return;
       }
       categoriaFinal = nuevaCategoria.trim();
+      categoriaId = nuevaCategoria.trim();
     } else if (!categoria) {
       mostrarNotificacion('Debe seleccionar o crear una categoría', 'error');
       return;
+    } else {
+      // Si es un ID numérico, buscar el nombre de la categoría
+      const catEncontrada = categorias.find(cat => (cat.id || cat) === categoria);
+      if (catEncontrada) {
+        categoriaFinal = catEncontrada.name || catEncontrada;
+        categoriaId = catEncontrada.id || categoria;
+      }
     }
 
     setLoading(true);
@@ -212,7 +221,15 @@ function App() {
         const response = await fetch(`${getApiUrl('PRODUCTOS')}/${producto.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor, imagenUrl })
+          body: JSON.stringify({
+            name: nombre,
+            description: descripcion,
+            price: precio,
+            categoria_id: categoriaId,
+            stock: stock,
+            supplier: proveedor,
+            image_url: imagenUrl
+          })
         });
 
         if (response.ok) {
@@ -230,7 +247,15 @@ function App() {
         const response = await fetch(getApiUrl('PRODUCTOS'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor, imagenUrl })
+          body: JSON.stringify({
+            name: nombre,
+            description: descripcion,
+            price: precio,
+            categoria_id: categoriaId,
+            stock: stock,
+            supplier: proveedor,
+            image_url: imagenUrl
+          })
         });
 
         const data = await response.json();
@@ -287,7 +312,9 @@ function App() {
     setNombre(producto.nombre);
     setDescripcion(producto.descripcion || '');
     setPrecio(producto.precio);
-    setCategoria(producto.categoria);
+    // Buscar la categoría por nombre para obtener el ID
+    const catEncontrada = categorias.find(cat => (cat.name || cat) === producto.categoria);
+    setCategoria(catEncontrada ? (catEncontrada.id || catEncontrada) : producto.categoria);
     setNuevaCategoria('');
     setStock(producto.stock);
     setProveedor(producto.proveedor || '');
@@ -992,8 +1019,8 @@ function App() {
                         <em>Seleccionar categoría</em>
                       </MenuItem>
                       {categorias.map((cat, index) => (
-                        <MenuItem key={index} value={cat}>
-                          {cat}
+                        <MenuItem key={cat.id || index} value={cat.id || cat}>
+                          {cat.name || cat}
                         </MenuItem>
                       ))}
                       <MenuItem value="__nueva__">
