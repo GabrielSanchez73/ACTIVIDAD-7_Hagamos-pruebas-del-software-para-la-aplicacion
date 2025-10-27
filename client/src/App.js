@@ -217,7 +217,7 @@ function App() {
 
         if (response.ok) {
           const nuevosProductos = [...productos];
-          nuevosProductos[editIndex] = { ...producto, nombre, descripcion, precio, categoria, stock, proveedor };
+          nuevosProductos[editIndex] = { ...producto, nombre, descripcion, precio, categoria, stock, proveedor, imagenUrl };
           setProductos(nuevosProductos);
           setEditIndex(null);
           mostrarNotificacion('Producto actualizado correctamente');
