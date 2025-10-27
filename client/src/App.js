@@ -111,19 +111,33 @@ function App() {
     try {
       let url = getApiUrl('PRODUCTOS');
       const params = new URLSearchParams();
-      
+
       if (filtroNombre) params.append('nombre', filtroNombre);
-      if (filtroCategoria) params.append('categoria', filtroCategoria);
+      if (filtroCategoria) {
+        // Si filtroCategoria es un objeto, usar el nombre
+        const catName = typeof filtroCategoria === 'object' ? filtroCategoria.name || filtroCategoria : filtroCategoria;
+        params.append('categoria', catName);
+      }
       if (filtroPrecioMin && filtroPrecioMin.trim() !== '') params.append('precio_min', filtroPrecioMin);
       if (filtroPrecioMax && filtroPrecioMax.trim() !== '') params.append('precio_max', filtroPrecioMax);
-      
+
       if (params.toString()) {
         url += '?' + params.toString();
       }
-      
+
       const response = await fetch(url);
       const data = await response.json();
-      setProductos(data);
+      // Normalizar los datos de productos
+      const productosNormalizados = data.map(producto => ({
+        ...producto,
+        name: producto.name || producto.nombre,
+        description: producto.description || producto.descripcion,
+        price: producto.price || producto.precio,
+        category: producto.category || producto.categoria,
+        supplier: producto.supplier || producto.proveedor,
+        image_url: producto.image_url || producto.imagenUrl
+      }));
+      setProductos(productosNormalizados);
     } catch (error) {
       mostrarNotificacion('Error al cargar los productos', 'error');
     }
@@ -210,6 +224,10 @@ function App() {
       if (catEncontrada) {
         categoriaFinal = catEncontrada.name || catEncontrada;
         categoriaId = catEncontrada.id || categoria;
+      } else {
+        // Si no se encuentra, usar el valor directamente (compatibilidad con strings)
+        categoriaFinal = categoria;
+        categoriaId = categoria;
       }
     }
 
@@ -234,7 +252,16 @@ function App() {
 
         if (response.ok) {
           const nuevosProductos = [...productos];
-          nuevosProductos[editIndex] = { ...producto, name: nombre, description: descripcion, price: precio, category: categoriaFinal, stock: stock, supplier: proveedor, image_url: imagenUrl };
+          nuevosProductos[editIndex] = {
+            ...producto,
+            name: nombre,
+            description: descripcion,
+            price: precio,
+            category: categoriaFinal,
+            stock: stock,
+            supplier: proveedor,
+            image_url: imagenUrl
+          };
           setProductos(nuevosProductos);
           setEditIndex(null);
           mostrarNotificacion('Producto actualizado correctamente');
@@ -260,7 +287,17 @@ function App() {
 
         const data = await response.json();
         if (response.ok) {
-          setProductos([...productos, data]);
+          // Asegurar que el producto tenga los campos correctos
+          const nuevoProducto = {
+            ...data,
+            name: data.name || data.nombre,
+            description: data.description || data.descripcion,
+            price: data.price || data.precio,
+            category: data.category || data.categoria,
+            supplier: data.supplier || data.proveedor,
+            image_url: data.image_url || data.imagenUrl
+          };
+          setProductos([...productos, nuevoProducto]);
           mostrarNotificacion('Producto guardado correctamente');
         } else {
           mostrarNotificacion(data.error || 'Error al guardar el producto', 'error');
@@ -571,7 +608,7 @@ function App() {
                 >
                   <MenuItem value="">Todas las categorías</MenuItem>
                   {categorias.map((cat) => (
-                    <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                    <MenuItem key={cat.id || cat} value={cat.id || cat}>{cat.name || cat}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
