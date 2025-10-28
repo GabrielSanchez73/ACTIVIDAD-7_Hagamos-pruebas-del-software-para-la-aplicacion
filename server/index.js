@@ -37,8 +37,8 @@ app.get('/productos', (req, res) => {
 
     // Filtro por categoría
     if (categoria) {
-        sql += ' AND categoria = ?';
-        params.push(categoria);
+        sql += ' AND (categoria = ? OR categoria_id = ?)';
+        params.push(categoria, categoria);
     }
 
     // Filtro por precio mínimo
