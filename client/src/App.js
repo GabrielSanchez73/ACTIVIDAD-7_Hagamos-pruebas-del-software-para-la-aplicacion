@@ -116,7 +116,17 @@ function App() {
       if (filtroCategoria) {
         // Si filtroCategoria es un objeto, usar el nombre
         const catName = typeof filtroCategoria === 'object' ? filtroCategoria.name || filtroCategoria : filtroCategoria;
-        params.append('categoria', catName);
+        // Si es un ID numérico, buscar el nombre de la categoría
+        if (typeof filtroCategoria === 'string' && !isNaN(filtroCategoria)) {
+          const catEncontrada = categorias.find(cat => (cat.id || cat) === filtroCategoria);
+          if (catEncontrada) {
+            params.append('categoria', catEncontrada.name || catEncontrada);
+          } else {
+            params.append('categoria', filtroCategoria);
+          }
+        } else {
+          params.append('categoria', catName);
+        }
       }
       if (filtroPrecioMin && filtroPrecioMin.trim() !== '') params.append('precio_min', filtroPrecioMin);
       if (filtroPrecioMax && filtroPrecioMax.trim() !== '') params.append('precio_max', filtroPrecioMax);
