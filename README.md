@@ -4,21 +4,21 @@ Sistema web completo para la gestión de inventario, productos y categorías des
 
 ## Características principales
 
-- **Gestión completa de productos** (CRUD)
-- **Sistema de categorías inteligente**
-- **Filtros de búsqueda avanzados**
-- **Dashboard con estadísticas**
-- **Interfaz moderna y responsive**
-- **Accesibilidad básica (WCAG 2.1)**
-- **Prototipado documentado**
-- **Adaptabilidad multi-dispositivo**
+- Gestión completa de productos (CRUD)
+- Sistema de categorías inteligente
+- Filtros de búsqueda avanzados
+- Dashboard con estadísticas
+- Interfaz moderna y responsive
+- Accesibilidad básica (WCAG 2.1)
+- Prototipado documentado
+- Adaptabilidad multi-dispositivo
 
 ## Tecnologías utilizadas
 
-- **Frontend**: React.js + Material-UI
-- **Backend**: Node.js + Express.js
-- **Base de Datos**: MySQL
-- **Lenguaje**: JavaScript
+- Frontend: React.js + Material-UI
+- Backend: Node.js + Express.js
+- Base de Datos: MySQL
+- Lenguaje: JavaScript
 
 ## Instalación
 
@@ -27,41 +27,41 @@ Sistema web completo para la gestión de inventario, productos y categorías des
 - MySQL 8.0+
 
 ### Pasos
-1. **Clonar repositorio**
+1. Clonar repositorio
    ```bash
-   git clone https://github.com/GabrielSanchez73/ACTIVIDAD-1.-Analicemos-y-dise-emos-un-software-para-a-gesti-n-gerencial-de-organizaciones.git
-   cd ACTIVIDAD-1.-Analicemos-y-dise-emos-un-software-para-a-gesti-n-gerencial-de-organizaciones
+   git clone https://github.com/GabrielSanchez73/ACTIVIDAD-7_Hagamos-pruebas-del-software-para-la-aplicacion.git
+   cd ACTIVIDAD-7_Hagamos-pruebas-del-software-para-la-aplicacion
    ```
 
-2. **Instalar dependencias del servidor**
+2. Instalar dependencias del servidor
    ```bash
    cd server
    npm install
    ```
 
-3. **Instalar dependencias del cliente**
+3. Instalar dependencias del cliente
    ```bash
    cd ../client
    npm install
    ```
 
-4. **Configurar base de datos**
+4. Configurar base de datos
    - Crear base de datos MySQL: `sistema_productos`
    - Ejecutar script: `database.sql`
 
-5. **Iniciar sistema**
+5. Iniciar sistema
    ```bash
    # Terminal 1 - Servidor
    cd server && npm start
-   
+
    # Terminal 2 - Cliente
    cd client && npm start
    ```
 
 ## Acceso
 
-- **Frontend**: http://localhost:4000
-- **Backend**: http://localhost:5000
+- Frontend: http://localhost:4000
+- Backend: http://localhost:5000
 
 ## Funcionalidades
 
@@ -69,33 +69,33 @@ Sistema web completo para la gestión de inventario, productos y categorías des
 - Agregar, editar, eliminar productos
 - Campos: nombre, descripción, precio, categoría, stock, proveedor
 - Validaciones de formulario
-- **Accesibilidad**: aria-labels, navegación por teclado
+- Accesibilidad: aria-labels, navegación por teclado
 
 ### Sistema de Categorías
 - Selector desplegable de categorías existentes
 - Creación de nuevas categorías en tiempo real
 - Sincronización automática
-- **UX mejorada**: Indicadores visuales y validación
+- UX mejorada: Indicadores visuales y validación
 
 ### Filtros de Búsqueda
 - Filtro por nombre
 - Filtro por categoría
 - Filtros de precio (mínimo y máximo)
 - Filtros combinados
-- **Indicadores visuales**: Chips de filtros activos
+- Indicadores visuales: Chips de filtros activos
 
 ### Panel de estadísticas
 - Contador de productos totales
 - Stock disponible
 - Precio promedio
 - Número de categorías
-- **Diseño responsive**: Se adapta a todos los dispositivos
+- Diseño responsive: Se adapta a todos los dispositivos
 
 ### Prototipado y Diseño
-- **Wireframes**: Diseño de baja fidelidad
-- **Mockups**: Diseño de alta fidelidad
-- **User flows**: Flujos de usuario documentados
-- **Decisiones de diseño**: Justificación de elecciones técnicas
+- Wireframes: Diseño de baja fidelidad
+- Mockups: Diseño de alta fidelidad
+- User flows: Flujos de usuario documentados
+- Decisiones de diseño: Justificación de elecciones técnicas
 
 ## Estructura del proyecto
 
@@ -131,12 +131,19 @@ node test-system.js
 node test-filtros-precio.js
 ```
 
+## Documentación adicional
+
+- `README_MEJORAS.md` - Detalles de implementación
+- `SISTEMA_FILTROS.md` - Guía de filtros
+- `README_PROTOTIPO.md` - Documentación de prototipado y diseño
+- `docs/ADAPTABILIDAD_MULTIDISPOSITIVO.md` - Evidencias responsive
+- `GUIA_VIDEO_YOUTUBE.md` - Guía para video de demostración
+- `iniciar-sistema.bat` - Script de inicio automático
+
 ## Autor
 
-**Gabriel Sánchez** - Estudiante de Ingeniería de Software
+Gabriel Sánchez - Estudiante de Ingeniería de Software
+
+## Licencia
 
 Proyecto académico - Universidad
-
----
-
-Desarrollado para el aprendizaje y desarrollo profesional
