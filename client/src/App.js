@@ -601,8 +601,56 @@ function App() {
                   value={filtroCategoria}
                   label="Categoría"
                   onChange={(e) => {
-                    setFiltroCategoria(e.target.value);
-                    setTimeout(() => aplicarFiltros(), 100);
+                    const selectedValue = e.target.value;
+                    setFiltroCategoria(selectedValue);
+                    // Aplicar filtro inmediatamente cuando se selecciona una categoría
+                    if (selectedValue) {
+                      setTimeout(() => {
+                        const params = new URLSearchParams();
+                        if (filtroNombre) params.append('nombre', filtroNombre);
+                        if (selectedValue) {
+                          // Convertir ID a nombre si es necesario
+                          if (typeof selectedValue === 'string' && !isNaN(selectedValue)) {
+                            const catEncontrada = categorias.find(cat => (cat.id || cat) === selectedValue);
+                            if (catEncontrada) {
+                              params.append('categoria', catEncontrada.name || catEncontrada);
+                            } else {
+                              params.append('categoria', selectedValue);
+                            }
+                          } else {
+                            params.append('categoria', selectedValue);
+                          }
+                        }
+                        if (filtroPrecioMin && filtroPrecioMin.trim() !== '') params.append('precio_min', filtroPrecioMin);
+                        if (filtroPrecioMax && filtroPrecioMax.trim() !== '') params.append('precio_max', filtroPrecioMax);
+
+                        let url = getApiUrl('PRODUCTOS');
+                        if (params.toString()) {
+                          url += '?' + params.toString();
+                        }
+
+                        fetch(url)
+                          .then(response => response.json())
+                          .then(data => {
+                            const productosNormalizados = data.map(producto => ({
+                              ...producto,
+                              name: producto.name || producto.nombre,
+                              description: producto.description || producto.descripcion,
+                              price: producto.price || producto.precio,
+                              category: producto.category || producto.categoria,
+                              supplier: producto.supplier || producto.proveedor,
+                              image_url: producto.image_url || producto.imagenUrl
+                            }));
+                            setProductos(productosNormalizados);
+                          })
+                          .catch(error => {
+                            mostrarNotificacion('Error al filtrar productos', 'error');
+                          });
+                      }, 100);
+                    } else {
+                      // Si se selecciona "Todas las categorías", recargar todos los productos
+                      cargarProductos();
+                    }
                   }}
                   sx={{
                     borderRadius: 2,
