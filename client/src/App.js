@@ -395,7 +395,19 @@ function App() {
   const obtenerResumenFiltros = () => {
     const filtros = [];
     if (filtroNombre) filtros.push(`Nombre: "${filtroNombre}"`);
-    if (filtroCategoria) filtros.push(`Categoría: "${filtroCategoria}"`);
+    if (filtroCategoria) {
+      // Mostrar el nombre de la categoría en lugar del ID
+      if (typeof filtroCategoria === 'string' && !isNaN(filtroCategoria)) {
+        const catEncontrada = categorias.find(cat => (cat.id || cat) === filtroCategoria);
+        if (catEncontrada) {
+          filtros.push(`Categoría: "${catEncontrada.name || catEncontrada}"`);
+        } else {
+          filtros.push(`Categoría: "${filtroCategoria}"`);
+        }
+      } else {
+        filtros.push(`Categoría: "${filtroCategoria}"`);
+      }
+    }
     if (filtroPrecioMin && filtroPrecioMin.trim() !== '') filtros.push(`Precio ≥ $${filtroPrecioMin}`);
     if (filtroPrecioMax && filtroPrecioMax.trim() !== '') filtros.push(`Precio ≤ $${filtroPrecioMax}`);
     return filtros.join(', ');
