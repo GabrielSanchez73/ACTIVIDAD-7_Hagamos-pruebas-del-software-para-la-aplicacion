@@ -131,27 +131,9 @@ node test-system.js
 node test-filtros-precio.js
 ```
 
-## Documentación adicional
-
-- `README_MEJORAS.md` - Detalles de implementación
-- `SISTEMA_FILTROS.md` - Guía de filtros
-- `README_PROTOTIPO.md` - **NUEVO** - Documentación de prototipado y diseño
-- `docs/ADAPTABILIDAD_MULTIDISPOSITIVO.md` - **NUEVO** - Evidencias responsive
-- `GUIA_VIDEO_YOUTUBE.md` - **NUEVO** - Guía para video de demostración
-- `iniciar-sistema.bat` - Script de inicio automático
-
 ## Autor
 
 **Gabriel Sánchez** - Estudiante de Ingeniería de Software
-
-## Fecha
-
-31/08/2025
-
-Act 3
-9/09/2025
-
-## Licencia
 
 Proyecto académico - Universidad
 
