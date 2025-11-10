@@ -1371,4 +1371,1061 @@ function Home() {
               color: 'white',
               height: '100%',
               transition: 'transform 0.2s ease-in-out',
-              '&:hover': { transform: 'translateY(-
+              '&:hover': { transform: 'translateY(-4px)' }
+            }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                      {estadisticas.stock_total || 0}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                      Stock Total
+                    </Typography>
+                  </Box>
+                  <StoreIcon sx={{ fontSize: 40, opacity: 0.8 }} />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{
+              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+              color: 'white',
+              height: '100%',
+              transition: 'transform 0.2s ease-in-out',
+              '&:hover': { transform: 'translateY(-4px)' }
+            }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                      ${estadisticas.precio_promedio ? estadisticas.precio_promedio.toFixed(2) : '0.00'}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                      Precio Promedio
+                    </Typography>
+                  </Box>
+                  <MoneyIcon sx={{ fontSize: 40, opacity: 0.8 }} />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{
+              background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+              color: 'white',
+              height: '100%',
+              transition: 'transform 0.2s ease-in-out',
+              '&:hover': { transform: 'translateY(-4px)' }
+            }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="h4" sx={{ fontWeight: 700 }}>
+                      {estadisticas.total_categorias || 0}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                      Categorías
+                    </Typography>
+                  </Box>
+                  <CategoryIcon sx={{ fontSize: 40, opacity: 0.8 }} />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Filtros y búsqueda */}
+        <Card sx={{ mb: 4, borderRadius: 2 }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FilterIcon />
+              Filtros de Búsqueda
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={6} md={3}>
+                <TextField
+                  fullWidth
+                  label="Buscar por nombre"
+                  value={filtroNombre}
+                  onChange={(e) => setFiltroNombre(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <FormControl fullWidth>
+                  <InputLabel>Categoría</InputLabel>
+                  <Select
+                    value={filtroCategoria}
+                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    <MenuItem value="">
+                      <em>Todas las categorías</em>
+                    </MenuItem>
+                    {categorias.map((categoria) => (
+                      <MenuItem key={categoria.id} value={categoria.id}>
+                        {categoria.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  label="Precio mínimo"
+                  type="number"
+                  value={filtroPrecioMin}
+                  onChange={(e) => setFiltroPrecioMin(e.target.value)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <TextField
+                  fullWidth
+                  label="Precio máximo"
+                  type="number"
+                  value={filtroPrecioMax}
+                  onChange={(e) => setFiltroPrecioMax(e.target.value)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  }}
+                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={2}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button
+                    variant="contained"
+                    onClick={aplicarFiltros}
+                    startIcon={<SearchIcon />}
+                    sx={{
+                      background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                      borderRadius: 2,
+                      '&:hover': {
+                        background: 'linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%)',
+                      }
+                    }}
+                  >
+                    Buscar
+                  </Button>
+                  {hayFiltrosActivos() && (
+                    <Button
+                      variant="outlined"
+                      onClick={limpiarFiltros}
+                      startIcon={<ClearIcon />}
+                      sx={{ borderRadius: 2 }}
+                    >
+                      Limpiar
+                    </Button>
+                  )}
+                </Box>
+              </Grid>
+            </Grid>
+            {hayFiltrosActivos() && (
+              <Box sx={{ mt: 2 }}>
+                <Chip
+                  label={`Filtros activos: ${obtenerResumenFiltros()}`}
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                />
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Tabla de productos */}
+        <Card sx={{ borderRadius: 2 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InventoryIcon />
+                Productos ({productos.length})
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  startIcon={<CategoryIcon />}
+                  onClick={() => setOpenCategoryDialog(true)}
+                  sx={{ borderRadius: 2 }}
+                >
+                  Gestionar Categorías
+                </Button>
+                <Button
+                  component={Link}
+                  to="/nuevo-producto"
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  sx={{
+                    background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                    borderRadius: 2,
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%)',
+                    }
+                  }}
+                >
+                  Nuevo Producto
+                </Button>
+              </Box>
+            </Box>
+
+            <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  }}>
+                    <TableCell sx={{ color: 'white', fontWeight: 600 }}>Nombre</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 600 }}>Categoría</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 600 }}>Precio</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 600 }}>Stock</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 600 }}>Proveedor</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 600 }}>Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {productos.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center" sx={{ py: 6 }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                          <InventoryIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
+                          <Typography variant="h6" color="text.secondary" gutterBottom>
+                            No hay productos registrados
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                            {hayFiltrosActivos() ? 'No se encontraron productos con los filtros aplicados' : 'Comienza agregando tu primer producto'}
+                          </Typography>
+                          {!hayFiltrosActivos() && (
+                            <Button
+                              component={Link}
+                              to="/nuevo-producto"
+                              variant="contained"
+                              startIcon={<AddIcon />}
+                              sx={{
+                                background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                                borderRadius: 2,
+                                '&:hover': {
+                                  background: 'linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%)',
+                                }
+                              }}
+                            >
+                              Agregar Primer Producto
+                            </Button>
+                          )}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    productos.map((producto, idx) => (
+                      <TableRow key={producto.id} hover>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            {producto.image_url && (
+                              <Avatar
+                                src={producto.image_url}
+                                alt={producto.name}
+                                sx={{ width: 40, height: 40, borderRadius: 1 }}
+                                variant="rounded"
+                              />
+                            )}
+                            <Box>
+                              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                                {producto.name}
+                              </Typography>
+                              {producto.description && (
+                                <Typography variant="body2" color="text.secondary" sx={{
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  maxWidth: 200
+                                }}>
+                                  {producto.description}
+                                </Typography>
+                              )}
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={producto.category}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body1" sx={{ fontWeight: 600, color: '#2e7d32' }}>
+                            ${parseFloat(producto.price).toFixed(2)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={producto.stock}
+                            size="small"
+                            color={producto.stock > 10 ? 'success' : producto.stock > 0 ? 'warning' : 'error'}
+                            variant="filled"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {producto.supplier || 'Sin proveedor'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', gap: 0.5 }}>
+                            <Tooltip title="Editar producto">
+                              <IconButton
+                                component={Link}
+                                to={`/editar-producto/${producto.id}`}
+                                color="primary"
+                                size="small"
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Eliminar producto">
+                              <IconButton
+                                color="error"
+                                onClick={() => eliminarProducto(idx)}
+                                size="small"
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      </Container>
+
+      {/* Diálogo de gestión de categorías */}
+      <CategoryManager
+        open={openCategoryDialog}
+        onClose={() => setOpenCategoryDialog(false)}
+        onCategoryChange={handleCategoryChange}
+      />
+
+      {/* Notificaciones */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={cerrarNotificacion}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={cerrarNotificacion}
+          severity={snackbar.severity}
+          sx={{
+            width: '100%',
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {/* Botón flotante para agregar producto */}
+      <Fab
+        component={Link}
+        to="/nuevo-producto"
+        color="primary"
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+          '&:hover': {
+            background: 'linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%)',
+          }
+        }}
+      >
+        <AddIcon />
+      </Fab>
+    </Box>
+  );
+}
+
+export default Home;
+```
+
+### 5.8 Crear el Formulario de Producto
+Crea `src/pages/ProductForm.jsx`:
+
+```javascript
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { productsAPI } from '../api/products';
+import { categoriesAPI } from '../api/categories';
+
+function ProductForm() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEdit = Boolean(id);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    price: '',
+    stock: '',
+    category_id: '',
+    image_url: '',
+    description: '',
+    supplier: '',
+    newCategory: ''
+  });
+
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  useEffect(() => {
+    loadCategories();
+    if (isEdit) {
+      loadProduct();
+    }
+  }, [id, isEdit]);
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoriesAPI.getAll();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error al cargar categorías:', error);
+    }
+  };
+
+  const loadProduct = async () => {
+    try {
+      setLoading(true);
+      const product = await productsAPI.getById(id);
+      setFormData({
+        name: product.name || '',
+        price: product.price || '',
+        stock: product.stock || '',
+        category_id: product.category_id || '',
+        image_url: product.image_url || '',
+        description: product.description || '',
+        supplier: product.supplier || ''
+      });
+    } catch (error) {
+      setError('Error al cargar el producto');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = 'El nombre es obligatorio';
+    }
+
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      errors.price = 'El precio debe ser mayor a 0';
+    }
+
+    if (formData.stock === '' || parseInt(formData.stock) < 0) {
+      errors.stock = 'El stock debe ser mayor o igual a 0';
+    }
+
+    if (!formData.category_id) {
+      errors.category_id = 'Debe seleccionar una categoría';
+    } else if (formData.category_id === 'new' && !formData.newCategory?.trim()) {
+      errors.category_id = 'Debe ingresar el nombre de la nueva categoría';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Limpiar error de validación cuando el usuario empiece a escribir
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      let categoryId = formData.category_id;
+
+      // Si se seleccionó "Agregar nueva categoría", crearla primero
+      if (formData.category_id === 'new' && formData.newCategory.trim()) {
+        try {
+          const newCategory = await categoriesAPI.create({ name: formData.newCategory.trim() });
+          categoryId = newCategory.id;
+          // Recargar categorías para incluir la nueva
+          loadCategories();
+        } catch (categoryError) {
+          setError('Error al crear la nueva categoría');
+          console.error('Error creando categoría:', categoryError);
+          return;
+        }
+      }
+
+      const productData = {
+        ...formData,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        categoria_id: parseInt(categoryId)
+      };
+
+      if (isEdit) {
+        await productsAPI.update(id, productData);
+      } else {
+        await productsAPI.create(productData);
+      }
+
+      navigate('/');
+    } catch (error) {
+      setError('Error al guardar el producto');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && isEdit) {
+    return (
+      <div className="loading">
+        <div className="spinner"></div>
+        <p>Cargando producto...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="product-form">
+      <div className="form-header">
+        <h1>{isEdit ? 'Editar Producto' : 'Nuevo Producto'}</h1>
+        <button onClick={() => navigate('/')} className="btn btn-secondary">
+          Volver
+        </button>
+      </div>
+
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="form">
+        <div className="form-group">
+          <label htmlFor="name">Nombre del Producto *</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className={validationErrors.name ? 'error' : ''}
+            placeholder="Ej: iPhone 15 Pro"
+          />
+          {validationErrors.name && (
+            <span className="error-text">{validationErrors.name}</span>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="price">Precio *</label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            className={validationErrors.price ? 'error' : ''}
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+          />
+          {validationErrors.price && (
+            <span className="error-text">{validationErrors.price}</span>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="stock">Stock *</label>
+          <input
+            type="number"
+            id="stock"
+            name="stock"
+            value={formData.stock}
+            onChange={handleChange}
+            className={validationErrors.stock ? 'error' : ''}
+            placeholder="0"
+            min="0"
+          />
+          {validationErrors.stock && (
+            <span className="error-text">{validationErrors.stock}</span>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="category_id">Categoría *</label>
+          <select
+            id="category_id"
+            name="category_id"
+            value={formData.category_id}
+            onChange={handleChange}
+            className={validationErrors.category_id ? 'error' : ''}
+          >
+            <option value="">Seleccionar categoría</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+            <option value="new">Agregar nueva categoría</option>
+          </select>
+          {validationErrors.category_id && (
+            <span className="error-text">{validationErrors.category_id}</span>
+          )}
+          {formData.category_id === 'new' && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder="Nueva categoría"
+                value={formData.newCategory || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, newCategory: e.target.value }))}
+                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="image_url">URL de Imagen</label>
+          <input
+            type="url"
+            id="image_url"
+            name="image_url"
+            value={formData.image_url}
+            onChange={handleChange}
+            placeholder="https://ejemplo.com/imagen.jpg"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="supplier">Proveedor</label>
+          <input
+            type="text"
+            id="supplier"
+            name="supplier"
+            value={formData.supplier}
+            onChange={handleChange}
+            placeholder="Nombre del proveedor"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="description">Descripción</label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Descripción del producto..."
+            rows="4"
+          />
+        </div>
+
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Guardando...' : (isEdit ? 'Actualizar' : 'Crear')}
+          </button>
+          <button type="button" onClick={() => navigate('/')} className="btn btn-secondary">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+export default ProductForm;
+```
+
+### 5.9 Crear el Archivo de Rutas
+Crea `src/App.jsx`:
+
+```javascript
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import ProductForm from './pages/ProductForm';
+import './App.css';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/nuevo-producto" element={<ProductForm />} />
+        <Route path="/editar-producto/:id" element={<ProductForm />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+### 5.10 Crear el Archivo de Configuración
+Crea `src/config.js`:
+
+```javascript
+const config = {
+  API_BASE_URL: 'http://localhost:5000'
+};
+
+export default config;
+```
+
+### 5.11 Crear los Estilos
+Crea `src/App.css`:
+
+```css
+/* Estilos generales */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Formulario de producto */
+.product-form {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.form-header h1 {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input.error,
+.form-group select.error {
+  border-color: #e74c3c;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.error-message {
+  background-color: #ffeaea;
+  color: #e74c3c;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #f5c6cb;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+/* Botones */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #667eea 30%, #764ba2 90%);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #5a6fd8 30%, #6a4190 90%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #e9ecef;
+}
+
+.btn-secondary:hover {
+  background: #e9ecef;
+  color: #495057;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .product-form {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .form-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+```
+
+---
+
+## 6. PROBAR LA APLICACIÓN
+
+### 6.1 Iniciar el Servidor
+En una terminal, navega a la carpeta `server` e inicia el backend:
+
+```bash
+cd server
+npm run dev
+```
+
+Deberías ver:
+```
+Servidor del backend corriendo desde el puerto 5000
+Sistema de Gestión de Productos - Backend
+```
+
+### 6.2 Iniciar el Cliente
+En otra terminal, navega a la carpeta `client` e inicia el frontend:
+
+```bash
+cd client
+npm run dev
+```
+
+Deberías ver algo como:
+```
+Vite dev server running at:
+  > Local: http://localhost:5173/
+```
+
+### 6.3 Probar las Funcionalidades
+
+1. **Crear categoría**: En el gestor de categorías, crea algunas categorías
+2. **Crear producto**: Llena el formulario y selecciona una categoría existente
+3. **Crear nueva categoría desde producto**: Selecciona "Agregar nueva categoría" en el formulario
+4. **Ver productos**: Los productos aparecen en la tabla con filtros
+5. **Editar categoría**: Modifica el nombre de una categoría
+6. **Eliminar categoría**: Solo se puede eliminar si no tiene productos asociados
+7. **Eliminar producto**: Elimina productos de la lista
+8. **Filtros**: Prueba los filtros por nombre, categoría y precio
+
+### 6.4 Acceder al Código Fuente
+Si quieres descargar el código completo para estudiarlo o modificarlo:
+
+**Opción 1: Clonar desde GitHub**
+```bash
+git clone https://github.com/GabrielSanchez73/Act-6-Desarrollemos-el-backend-y-conexi-n-a-la-base-de-datos.git
+cd Act-6-Desarrollemos-el-backend-y-conexi-n-a-la-base-de-datos
+```
+
+**Opción 2: Descargar ZIP**
+- Ve al repositorio: https://github.com/GabrielSanchez73/Act-6-Desarrollemos-el-backend-y-conexi-n-a-la-base-de-datos
+- Haz clic en "Code" > "Download ZIP"
+- Extrae el archivo ZIP en tu computadora
+- Abre la carpeta extraída en tu editor de código
+
+**Opción 3: Archivo Local**
+- El archivo `TUTORIAL_SISTEMA_PRODUCTOS.md` está disponible en la ruta: `D:\proyectos personales\A_S_act\el anterior\crud-nodejs-mysql-reactjs\TUTORIAL_SISTEMA_PRODUCTOS.md`
+
+---
+
+## 7. SOLUCIÓN DE PROBLEMAS COMUNES
+
+### 7.1 Error de Conexión a MySQL
+**Problema**: `Error al conectar la base de datos`
+**Solución**:
+- Verifica que MySQL esté corriendo
+- Revisa que la contraseña en `.env` sea correcta
+- Asegúrate de que la base de datos `sistema_productos` existe
+
+### 7.2 Error de Puerto Ocupado
+**Problema**: `EADDRINUSE: address already in use`
+**Solución**:
+```bash
+# En Windows, encuentra el proceso usando el puerto
+netstat -ano | findstr :5000
+# Mata el proceso con taskkill /PID <PID> /F
+```
+
+### 7.3 Error de Dependencias
+**Problema**: `Cannot find module 'express'`
+**Solución**:
+```bash
+# Instala las dependencias
+npm install
+```
+
+### 7.4 Error de CORS
+**Problema**: El frontend no puede conectarse al backend
+**Solución**: Asegúrate de que el backend tenga `cors()` habilitado
+
+### 7.5 Error al Crear Categoría
+**Problema**: "Error al crear la categoría"
+**Solución**: Verifica que el nombre no esté vacío y no sea duplicado
+
+### 7.6 Error al Eliminar Categoría
+**Problema**: "No se puede eliminar la categoría porque tiene productos asociados"
+**Solución**: Elimina primero todos los productos de esa categoría
+
+---
+
+¡Felicitaciones! Has completado exitosamente el tutorial del Sistema de Gestión de Productos. Ahora tienes una aplicación completa con:
+
+- ✅ Backend en Node.js con Express
+- ✅ Base de datos MySQL
+- ✅ Frontend en React con Material-UI
+- ✅ API REST completa
+- ✅ Gestión de productos y categorías
+- ✅ Filtros y búsqueda
+- ✅ Interfaz moderna y responsive
+
+¡Sigue practicando y mejorando tu aplicación!
